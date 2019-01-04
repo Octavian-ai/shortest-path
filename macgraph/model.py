@@ -74,7 +74,7 @@ def model_fn(features, labels, mode, params):
 
 		if args["use_lr_finder"]:
 			learning_rate = tf.train.exponential_decay(
-				1E-06, 
+				args["learning_rate"]/1e3, 
 				global_step,
 				decay_steps=100, 
 				decay_rate=1.5)

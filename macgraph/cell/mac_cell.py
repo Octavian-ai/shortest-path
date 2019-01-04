@@ -152,18 +152,16 @@ class MAC_Component(Component):
 			"iter_id":					self.context.in_iter_id,
 		}
 
-		if self.args["use_message_passing"]:
+		mp_reads = [f"mp_read{i}" for i in range(self.args["mp_read_heads"])]
 
-			mp_reads = [f"mp_read{i}" for i in range(self.args["mp_read_heads"])]
+		suffixes = ["_attn", "_attn_raw", "_query", "_signal"]
+		for qt in ["token_index_attn"]:
+			suffixes.append("_query_"+qt)
 
-			suffixes = ["_attn", "_attn_raw", "_query", "_signal"]
-			for qt in ["token_index_attn"]:
-				suffixes.append("_query_"+qt)
-
-			for mp_head in ["mp_write", *mp_reads]:
-				for suffix in suffixes:
-					i = mp_head + suffix
-					out_taps[i] = mp_taps.get(i, empty_query)
+		for mp_head in ["mp_write", *mp_reads]:
+			for suffix in suffixes:
+				i = mp_head + suffix
+				out_taps[i] = mp_taps.get(i, empty_query)
 
 	
 
@@ -174,23 +172,10 @@ class MAC_Component(Component):
 
 	def tap_sizes(self):
 
-		# TODO: Merge with taps / remove all this
-
-		# we need a DSL so badly
-		def add_query_taps(t, prefix):
-			t[f"{prefix}_token_content_attn"] = self.args["max_seq_len"]
-			t[f"{prefix}_token_index_attn"  ] = self.args["max_seq_len"]
-			t[f"{prefix}_step_const_signal" ] = self.args["input_width"]
-			t[f"{prefix}_memory_attn" 	    ] = self.args["memory_width"] // self.args["input_width"]
-			t[f"{prefix}_prev_output_attn"  ] = self.args["max_decode_iterations"]
-			t[f"{prefix}_switch_attn" 	    ] = 2
-
-
 		t = {
 			"mp_node_state":			tf.TensorShape([self.args["kb_node_max_len"], self.args["mp_state_width"]]),
 			"iter_id":					self.args["max_decode_iterations"],
 		}
-
 
 		mp_reads = [f"mp_read{i}" for i in range(self.args["mp_read_heads"])]
 

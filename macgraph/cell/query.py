@@ -42,7 +42,7 @@ def generate_query(context:CellContext, name):
 		master_signal = tf.concat(ms, -1)
 
 		# Content address the question tokens
-		token_query = tf.layers.dense(master_signal, context.args["input_width"])
+		token_query = tf.layers.dense(master_signal, context.args["embed_width"])
 		token_signal, _, x_taps = attention(context.in_question_tokens, token_query)
 		sources.append(token_signal)
 		add_taps("token_content", x_taps)
@@ -55,22 +55,6 @@ def generate_query(context:CellContext, name):
 		token_index_signal, query = attention_by_index(in_question_tokens_padded, master_signal)
 		sources.append(token_index_signal)
 		taps["token_index_attn"] = tf.expand_dims(query, 2)
-
-		# Use the iteration id
-		# Disabling for now as not useful
-		# step_const_signal = tf.layers.dense(context.in_iter_id, context.args["input_width"])
-		# taps["step_const_signal"] = step_const_signal
-		# sources.append(step_const_signal)
-		
-		# Use the memory contents
-		# For now disabled as it forces memory to be too big and is not currently used
-		# if context.args["use_memory_cell"]:
-		# 	memory_shape = [context.features["d_batch_size"], context.args["memory_width"] // context.args["input_width"], context.args["input_width"]]
-		# 	memory_query = tf.layers.dense(master_signal, context.args["input_width"])
-		# 	memory_signal, _, x_taps  = attention(tf.reshape(context.in_memory_state, memory_shape), memory_query)
-
-		# 	sources.append(memory_signal)
-		# 	add_taps("memory", x_taps)
 
 		if context.args["use_read_previous_outputs"]:
 			# Use the previous output of the network

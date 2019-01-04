@@ -19,7 +19,7 @@ def messaging_cell(context:CellContext):
 
 	node_table, node_table_width, node_table_len = get_table_with_embedding(context.args, context.features, context.vocab_embedding, "kb_node")
 
-	node_table_width = context.args["input_width"]
+	node_table_width = context.args["embed_width"]
 	node_table = node_table[:,:,0:node_table_width]
 
 	in_signal = context.in_iter_id

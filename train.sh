@@ -26,3 +26,4 @@ python -m macgraph.train \
 	--embed-width 128 \
 	--learning-rate 0.1 \
 	--fast \
+	$@

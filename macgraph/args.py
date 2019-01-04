@@ -61,22 +61,10 @@ def generate_args_derivatives(args):
 	r["answer_classes_path"] = os.path.join(r["input_dir"], "answer_classes.yaml")
 	r["answer_classes_types_path"] = os.path.join(r["input_dir"], "answer_classes_types.yaml")
 
-	if args["control_width"] is None:
-		r["control_width"] = args["input_width"] * args["control_heads"]
-
-	if not args["use_input_bilstm"]:
-		r["input_width"] = args["embed_width"]
-
 	r["mp_head_list"] = ["mp_write", "mp_read0"]
 
-	r["query_sources"] = [ "token_index"] # "token_content",
-	r["query_taps"] = ["switch_attn", "token_index_attn"] # "token_content_attn",
-	# r["query_sources"].append("step_const")
-	# r["query_taps"].append("step_const_signal")
-
-	if args["use_read_previous_outputs"]:
-		r["query_sources"].append("prev_output")
-		r["query_taps"].append("prev_output_attn")
+	r["query_sources"] = [ "token_index"]
+	r["query_taps"] = ["switch_attn", "token_index_attn"]
 
 
 	if args["use_fast"]:
@@ -182,6 +170,10 @@ def get_args(extend=lambda parser:None, argv=None):
 	parser.add_argument('--embed-width',	       		type=int, default=64,   help="The width of token embeddings")
 	parser.add_argument('--enable-embed-const-eye',		action='store_true', dest='use_embed_const_eye')
 
+	parser.add_argument('--kb-node-width',         		type=int, default=7,    help="Width of node entry into graph table aka the knowledge base")
+	parser.add_argument('--kb-node-max-len',         	type=int, default=40,   help="Maximum number of nodes in kb")
+	parser.add_argument('--kb-edge-width',         		type=int, default=3,    help="Width of edge entry into graph table aka the knowledge base")
+	parser.add_argument('--kb-edge-max-len',         	type=int, default=40,   help="Maximum number of edges in kb")	
 
 	parser.add_argument('--mp-activation',				type=str, default="selu", 		choices=ACTIVATION_FNS.keys())
 	parser.add_argument('--mp-state-width', 			type=int, default=4)
@@ -192,7 +184,7 @@ def get_args(extend=lambda parser:None, argv=None):
 	parser.add_argument('--output-layers',				type=int, default=1)
 	parser.add_argument('--output-width',	       		type=int, default=128,    help="The number of different possible answers (e.g. answer classes). Currently tied to vocab size since we attempt to tokenise the output.")
 
-	arser.add_argument('--enable-lr-finder', 			action='store_true',  dest="use_lr_finder")
+	parser.add_argument('--enable-lr-finder', 			action='store_true',  dest="use_lr_finder")
 	parser.add_argument('--enable-curriculum', 			action='store_true',  dest="use_curriculum")
 
 	parser.add_argument('--enable-tf-debug', 			action='store_true',  dest="use_tf_debug")

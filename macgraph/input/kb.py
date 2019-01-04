@@ -20,19 +20,6 @@ def get_table_with_embedding(args, features, vocab_embedding, noun):
 	d_len = tf.shape(table)[1]
 	assert table.shape[-1] == width, f"Table shape {table.shape} did not have expected inner width dimensions of {width}"
 
-
-	# --------------------------------------------------------------------------
-	# Extend table if desired
-	# --------------------------------------------------------------------------
-
-	if args["read_indicator_rows"] > 0:
-		# Add a trainable row to the table
-		ind_row_shape = [features["d_batch_size"], args["read_indicator_rows"], width]
-		ind_row = tf.fill(ind_row_shape, tf.cast(UNK_ID, table.dtype))
-		table = tf.concat([table, ind_row], axis=1)
-		table_len += args["read_indicator_rows"]
-		d_len += args["read_indicator_rows"]
-
 	# --------------------------------------------------------------------------
 	# Embed graph tokens
 	# --------------------------------------------------------------------------

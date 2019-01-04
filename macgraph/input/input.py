@@ -29,11 +29,8 @@ def parse_single_example(i):
 def reshape_example(args, i):
 
 	def reshape_adj(tensor):
-		if args["use_input_adjacency"]:
-			return tf.reshape(tensor, [args["kb_node_max_len"], args["kb_node_max_len"]])
-		else:
-			return tensor
-
+		return tf.reshape(tensor, [args["kb_node_max_len"], args["kb_node_max_len"]])
+		
 	return ({
 		# Text input
 		"src": 				i["src"],
@@ -101,10 +98,8 @@ def input_fn(args, mode, question=None, repeat=True):
 	zero_64 = tf.cast(0, tf.int64) 
 	unk_64  = tf.cast(UNK_ID, tf.int64)
 
-	if args["use_input_adjacency"]:
-		kb_adjacency_shape = tf.TensorShape([args["kb_node_max_len"], args["kb_node_max_len"]])
-	else:
-		kb_adjacency_shape = tf.TensorShape([None])
+	kb_adjacency_shape = tf.TensorShape([args["kb_node_max_len"], args["kb_node_max_len"]])
+
 
 	d = d.padded_batch(
 		args["batch_size"],

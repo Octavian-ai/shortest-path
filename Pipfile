@@ -13,7 +13,7 @@ name = "pypi"
 
 tensorflow = "*"
 numpy = "*"
-pyyaml = "*"
+pyyaml = ">=4.2b1"
 tqdm = "*"
 colored = "*"
 coloredlogs = "*"

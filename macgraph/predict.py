@@ -59,8 +59,6 @@ def predict(args, cmd_args):
 					db = None
 				if part_noun.startswith("token"):
 					db = row["src"]
-				elif part_noun == "memory":
-					db = list(range(args["memory_width"]//args["input_width"]))
 				elif part_noun.startswith("prev_output"):
 					db = list(range(i+1))
 
