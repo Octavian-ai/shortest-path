@@ -189,9 +189,7 @@ def get_args(extend=lambda parser:None, argv=None):
 
 	parser.add_argument('--enable-tf-debug', 			action='store_true',  dest="use_tf_debug")
 	parser.add_argument('--enable-floyd',	 			action='store_true',  dest="use_floyd")
-	parser.add_argument('--diable-assert',	 			action='store_false',  dest="use_assert")
-	parser.add_argument('--disable-summary-scalar', 	action='store_false', dest='use_summary_scalar')
-	parser.add_argument('--enable-summary-image', 		action='store_true', dest='use_summary_image')
+	parser.add_argument('--disable-assert',	 			action='store_false',  dest="use_assert")
 	
 	args = vars(parser.parse_args(argv))
 

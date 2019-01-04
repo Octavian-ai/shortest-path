@@ -80,7 +80,6 @@ def model_fn(features, labels, mode, params):
 				decay_rate=1.5)
 
 
-		if args["use_summary_scalar"]:
 			var = tf.trainable_variables()
 			gradients = tf.gradients(loss, var)
 			norms = [tf.norm(i, 2) for i in gradients if i is not None]

@@ -24,6 +24,6 @@ python -m macgraph.train \
 	--eval-every 90 \
 	--mp-state-width 64 \
 	--embed-width 128 \
-	--learning-rate 0.1 \
+	--learning-rate 0.01 \
 	--fast \
 	$@
