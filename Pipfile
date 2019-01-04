@@ -1,0 +1,24 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[dev-packages]
+
+
+
+[packages]
+
+tensorflow = "*"
+numpy = "*"
+pyyaml = "*"
+tqdm = "*"
+colored = "*"
+coloredlogs = "*"
+
+
+[requires]
+
+python_version = "3.6"

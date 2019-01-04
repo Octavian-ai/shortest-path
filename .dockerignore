@@ -1,0 +1,6 @@
+
+input_data
+output
+kubernetes
+*.DS_Store
+.git
