@@ -20,13 +20,13 @@ Download the [pre-compiled YAML dataset](https://storage.googleapis.com/octavian
 
 ## Running
 
-`shell
+```shell
 pipenv install
 pipenv run ./train.sh
-`
+```
 
 ## Visualising the attention
 
-`shell
+```shell
 pipenv run python -m macgraph.predict --model-dir ./output/StationShortestPath/<insert your trained model path>
-`
+```
