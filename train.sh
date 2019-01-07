@@ -18,7 +18,7 @@ python -m macgraph.train \
 	--filter-output-class 7 \
 	--filter-output-class 8 \
 	--filter-output-class 9 \
-	--train-max-steps 30 \
+	--train-max-steps 10 \
 	--max-decode-iterations $iteration \
 	--fast \
 	$@

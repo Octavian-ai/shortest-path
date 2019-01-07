@@ -176,7 +176,7 @@ def get_args(extend=lambda parser:None, argv=None):
 	parser.add_argument('--kb-edge-max-len',         	type=int, default=40,   help="Maximum number of edges in kb")	
 
 	parser.add_argument('--mp-activation',				type=str, default="selu", 		choices=ACTIVATION_FNS.keys())
-	parser.add_argument('--mp-state-width', 			type=int, default=64)
+	parser.add_argument('--mp-state-width', 			type=int, default=4)
 	parser.add_argument('--disable-mp-gru', 			action='store_false', dest='use_mp_gru')
 	parser.add_argument('--mp-read-heads',				type=int, default=1)
 
