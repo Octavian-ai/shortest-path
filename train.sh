@@ -18,12 +18,7 @@ python -m macgraph.train \
 	--filter-output-class 7 \
 	--filter-output-class 8 \
 	--filter-output-class 9 \
-	--train-max-steps 20 \
+	--train-max-steps 30 \
 	--max-decode-iterations $iteration \
-	--enable-embed-const-eye \
-	--eval-every 90 \
-	--mp-state-width 64 \
-	--embed-width 128 \
-	--learning-rate 0.01 \
 	--fast \
 	$@

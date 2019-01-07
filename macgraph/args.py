@@ -140,12 +140,12 @@ def get_args(extend=lambda parser:None, argv=None):
 
 		
 	parser.add_argument('--max-gradient-norm',     		type=float, default=0.4)
-	parser.add_argument('--learning-rate',         		type=float, default=1e-3)
+	parser.add_argument('--learning-rate',         		type=float, default=0.01)
 	parser.add_argument('--enable-regularization',		action='store_true', dest='use_regularization')
 	parser.add_argument('--regularization-factor',		type=float, default=0.0001)
 	parser.add_argument('--random-seed',				type=int, default=3)
 	parser.add_argument('--enable-gradient-clipping',	action='store_true', dest='use_gradient_clipping')
-	parser.add_argument('--eval-every',					type=int,	default=7*60, help="Evaluate every X seconds")
+	parser.add_argument('--eval-every',					type=int,	default=2*60, help="Evaluate every X seconds")
 
 	parser.add_argument('--fast',						action='store_true', dest='use_fast')
 
@@ -167,8 +167,8 @@ def get_args(extend=lambda parser:None, argv=None):
 
 	parser.add_argument('--max-seq-len',	  	 		type=int, default=40,   help="Maximum length of question token list")
 	
-	parser.add_argument('--embed-width',	       		type=int, default=64,   help="The width of token embeddings")
-	parser.add_argument('--enable-embed-const-eye',		action='store_true', dest='use_embed_const_eye')
+	parser.add_argument('--embed-width',	       		type=int, default=128,   help="The width of token embeddings")
+	parser.add_argument('--disable-embed-const-eye',	action='store_false', dest='use_embed_const_eye')
 
 	parser.add_argument('--kb-node-width',         		type=int, default=7,    help="Width of node entry into graph table aka the knowledge base")
 	parser.add_argument('--kb-node-max-len',         	type=int, default=40,   help="Maximum number of nodes in kb")
@@ -176,13 +176,14 @@ def get_args(extend=lambda parser:None, argv=None):
 	parser.add_argument('--kb-edge-max-len',         	type=int, default=40,   help="Maximum number of edges in kb")	
 
 	parser.add_argument('--mp-activation',				type=str, default="selu", 		choices=ACTIVATION_FNS.keys())
-	parser.add_argument('--mp-state-width', 			type=int, default=4)
+	parser.add_argument('--mp-state-width', 			type=int, default=64)
 	parser.add_argument('--disable-mp-gru', 			action='store_false', dest='use_mp_gru')
 	parser.add_argument('--mp-read-heads',				type=int, default=1)
 
 	parser.add_argument('--output-activation',			type=str, default="selu", choices=ACTIVATION_FNS.keys())
 	parser.add_argument('--output-layers',				type=int, default=1)
 	parser.add_argument('--output-width',	       		type=int, default=128,    help="The number of different possible answers (e.g. answer classes). Currently tied to vocab size since we attempt to tokenise the output.")
+	parser.add_argument('--disable-output-lookback',	action='store_false', dest="use_output_lookback")
 
 	parser.add_argument('--enable-lr-finder', 			action='store_true',  dest="use_lr_finder")
 	parser.add_argument('--enable-curriculum', 			action='store_true',  dest="use_curriculum")

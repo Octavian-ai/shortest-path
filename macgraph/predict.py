@@ -78,14 +78,13 @@ def predict(args, cmd_args):
 			emoji = "❌"
 			answer_part = f"{stylize(row['predicted_label'], bg(1))}, expected {row['actual_label']}"
 
-		iterations = len(row["question_word_attn"])
 
 		print(emoji, " ", answer_part, " - ", ''.join(row['src']).replace('<space>', ' ').replace('<eos>', ''))
 
 		if cmd_args["hide_details"]:
 			return
 
-		for i in range(iterations):
+		for i in range(frozen_args["max_decode_iterations"]):
 
 			hr_text(f"Iteration {i}")
 
@@ -101,97 +100,40 @@ def predict(args, cmd_args):
 
 			mac.print_all(row_iter_slice)
 
-			# print("iter_id", row["iter_id"][i])
 
-			if args["use_control_cell"]:
-				for idx, control_head in enumerate(row["question_word_attn"][i]):
-					attn_sum = sum(control_head)
-					attn_text = ' '.join(color_text(row["src"], control_head))
-					print(f"{i}: {attn_text}")
-					# print(f"{i}: attn {list(zip(row['src'], np.squeeze(control_head)))} Σ={attn_sum}")
-					# print(f"{i}: attn_raw", list(zip(row["src"], row["question_word_attn_raw"][i][idx])))
+			mp_reads = [f"mp_read{i}" for i in range(args["mp_read_heads"])]
 
-			if args["use_read_cell"]:
+			for mp_head in ["mp_write", *mp_reads]:
 
-				for head_i in range(args["read_heads"]):
+				# -- Print node query ---
+				# print_query(i, mp_head+"_query", row)
 
-					read_switch_parts = []
-					for idx0, noun in enumerate(args["kb_list"]):
-						read_switch_parts.append(f"{noun}{head_i}")
-
-					if args["use_read_previous_outputs"]:
-						read_switch_parts.extend(["prev_output_content", "prev_output_index"])
-
-					if len(args["kb_list"]) > 0:
-						read_head_part = ' '.join(color_text(read_switch_parts, row[f"read{head_i}_head_attn"][i]))
-						print(f"{i}: read{head_i}_head_attn: {read_head_part}")
+				# --- Print node attn ---
+				db = [vocab.prediction_value_to_string(kb_row[0:1]) for kb_row in row["kb_nodes"]]
+				db = db[0:row["kb_nodes_len"]]
 				
-				
-					for idx0, noun in enumerate(args["kb_list"]):
-						if row[f"read{head_i}_head_attn"][i][idx0] > ATTN_THRESHOLD:
+				tap = mp_head+"_attn"
+				attn_sum = sum(row[mp_head+"_attn"][i])
+				print(f"{i}: {mp_head}_attn: ",', '.join(color_text(db, row[mp_head+"_attn"][i])))
+				# print(f"{i}: {tap}: ", list(zip(db, np.squeeze(row[tap][i]))), f"Σ={attn_sum}")
 
-							print_query(i, f"{noun}{head_i}", row)
+				# for tap in ["signal"]:
+				# 	t_v = row[f'{mp_head}_{tap}'][i]
+				# 	print(f"{i}: {mp_head}_{tap}:  {color_vector(t_v)}")
 
-							db = [vocab.prediction_value_to_string(kb_row) for kb_row in row[f"{noun}s"]]
-							print(f"{i}: {noun}{head_i}_attn: ",', '.join(color_text(db, row[f"{noun}{head_i}_attn"][i])))
+			# mp_state = color_vector(row['mp_node_state'][i][0:row['kb_nodes_len']])
+			# node_ids = [' node ' + pad_str(vocab.prediction_value_to_string(row[0])) for row in row['kb_nodes']]
+			# s = [': '.join(i) for i in zip(node_ids, mp_state)]
+			# mp_state_str = '\n'.join(s)
+			# print(f"{i}: mp_node_state:")
+			# print(mp_state_str)
 
-							for idx, attn in enumerate(row[f"{noun}{head_i}_attn"][i]):
-								if attn > ATTN_THRESHOLD and idx < len(row[f"{noun}s"]):
-									print(f"{i}: {noun}{head_i}_word_attn: ",', '.join(color_text(
-										vocab.prediction_value_to_string(row[f"{noun}s"][idx], True),
-										row[f"{noun}{head_i}_word_attn"][i],
-										)
-									))
-
-					if args["use_read_previous_outputs"]:
-						for idx_, noun in enumerate(["po_content", "po_index"]):
-							idx = idx_ + len(args["kb_list"])
-							if row[f"read{head_i}_head_attn"][i][idx] > ATTN_THRESHOLD:
-								v = f"read{head_i}_{noun}_attn"
-								db = list(range(args["max_decode_iterations"]))
-								print(f"{i}: {v}: ",', '.join(color_text(db, row[v][i])))
-
-
-					hr()
-
-
-			if args["use_message_passing"]:
-
-				mp_reads = [f"mp_read{i}" for i in range(args["mp_read_heads"])]
-
-				for mp_head in ["mp_write", *mp_reads]:
-
-					# -- Print node query ---
-					# print_query(i, mp_head+"_query", row)
-
-					# --- Print node attn ---
-					db = [vocab.prediction_value_to_string(kb_row[0:1]) for kb_row in row["kb_nodes"]]
-					db = db[0:row["kb_nodes_len"]]
 					
-					tap = mp_head+"_attn"
-					attn_sum = sum(row[mp_head+"_attn"][i])
-					print(f"{i}: {mp_head}_attn: ",', '.join(color_text(db, row[mp_head+"_attn"][i])))
-					# print(f"{i}: {tap}: ", list(zip(db, np.squeeze(row[tap][i]))), f"Σ={attn_sum}")
+		hr()
+		print("Adjacency:\n",
+			adj_pretty(row["kb_adjacency"], row["kb_nodes_len"], row["kb_nodes"], vocab))
 
-					for tap in ["signal"]:
-						t_v = row[f'{mp_head}_{tap}'][i]
-						print(f"{i}: {mp_head}_{tap}:  {color_vector(t_v)}")
-
-				mp_state = color_vector(row['mp_node_state'][i][0:row['kb_nodes_len']])
-				node_ids = [' node ' + pad_str(vocab.prediction_value_to_string(row[0])) for row in row['kb_nodes']]
-				s = [': '.join(i) for i in zip(node_ids, mp_state)]
-				mp_state_str = '\n'.join(s)
-				print(f"{i}: mp_node_state:")
-				print(mp_state_str)
-
-				
-
-		if args["use_message_passing"]:
-			hr()
-			print("Adjacency:\n",
-				adj_pretty(row["kb_adjacency"], row["kb_nodes_len"], row["kb_nodes"], vocab))
-
-		
+	
 
 	def decode_row(row):
 		for i in ["type_string", "actual_label", "predicted_label", "src"]:
