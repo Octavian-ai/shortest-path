@@ -15,3 +15,18 @@ Here we present a "Graph network with attention read and write", a simple networ
 We present this network both as a novel system in of itself, but more importantly as the basis for further investigation into effective neural graph computation.
 
 See the [full descripton on Medium]()
+
+Download the [pre-compiled YAML dataset](https://storage.googleapis.com/octavian-static/download/clevr-graph/StationShortestCount.zip) or the [fully-compiled TFRecords dataset](https://storage.googleapis.com/octavian-static/download/mac-graph/StationShortestCount.zip). Data is expected to live in input_data/processed/StationShortestCount/.
+
+## Running
+
+`shell
+pipenv install
+pipenv run ./train.sh
+`
+
+## Visualising the attention
+
+`shell
+pipenv run python -m macgraph.predict --model-dir ./output/StationShortestPath/<insert your trained model path>
+`
