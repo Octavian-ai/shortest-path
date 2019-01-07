@@ -14,7 +14,7 @@ Here we present a "Graph network with attention read and write", a simple networ
 
 We present this network both as a novel system in of itself, but more importantly as the basis for further investigation into effective neural graph computation.
 
-See the [full network description](https://medium.com/octavian-ai/finding-shortest-paths-with-graph-networks-807c5bbfc9c8).
+Read our [extensive article about this architecture](https://medium.com/octavian-ai/finding-shortest-paths-with-graph-networks-807c5bbfc9c8).
 
 Download the [pre-compiled YAML dataset](https://storage.googleapis.com/octavian-static/download/clevr-graph/StationShortestCount.zip) or the [fully-compiled TFRecords dataset](https://storage.googleapis.com/octavian-static/download/mac-graph/StationShortestCount.zip). Data is expected to live in input_data/processed/StationShortestCount/.
 
